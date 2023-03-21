@@ -1,0 +1,16 @@
+====================
+======== VIM =======
+====================
+
+
+vim <filename>      opens file in vim editor
+gg                  go to first line
+G                   go to last line of file
+i                   insert mode (you can now type stuff in the file)
+:q                  quit
+:w                  save
+:wq                 save and quit
+:q!                 quit without Saving
+:wqa                save, quit on all tabs
+:w !sudo tee %      write out the current file using sudo
+
