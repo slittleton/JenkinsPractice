@@ -127,7 +127,7 @@ export Variable=value	        To set value of an environment variable
 ---------------------------------
 User management commands of linux
 ---------------------------------
-
+sudo -i                             changes to root user
 sudo adduser username	                To add a new user
 sudo passwd -l 'username'	            To change the password of a user
 sudo userdel -r 'username'	            To remove a newly created user
@@ -157,6 +157,22 @@ root:           x:                  0:      0:        root:   /root:    /bin/bas
 /etc/group  file contains group info
 
 
+-----SUDO------
+(Generally Dont use this method because a type in sudoers file will disable use of sudo)
+sudoers file contains users with elevated permissions such as root user
+add user to sudoers file
+
+visudo		open sudoers file in vim
+in sudoers file find root user permissions line and you can add users
+root ALL=(ALL) ALL
+user1 ALL=(ALL) NOPASSWD: ALL
+
+Better method to give sudo permission - go to sudoers.d directory and add a new file with permissions
+
+cd /etc/sudoers.d/
+touch group1
+ 		insert line  %groupName        ALL=(ALL)       NOPASSWD: ALL
+or		insert line  userName	       ALL=(ALL)       NOPASSWD: ALL
 
 
 
@@ -255,4 +271,88 @@ ls | grep <searchtextpattern>          list files that contain specific text
 
 --- find command -----
 find /folder -name <textpattern>*
+
+
+
+
+
+--------------------
+Package Management
+--------------------
+find packages online  such as RPM 
+
+--- CURL
+copy the link address for the download and use CURL command the put -o and the filename
+curl https://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/tree-1.6.0-10.el7.x86_64.rpm -o tree-1.6.0-10.el7.x86_64.rpm
+
+tree /var/log       
+
+--- RPM 
+rpm -ivh <filename>
+
+--- YUM
+yum install <packagename>
+
+------------------------
+Services
+------------------------
+
+yum install httpd -you          install httpd Service using yum
+systemctl status httpd          view status of httpd
+systemctl start httpd           start service called httpd
+systemctl restart httpd         restart service called httpd (use if you make changes to service)
+
+systemctl enable httpd          set service to start up when system boots
+systemctl is-active httpd        tells you if service is active
+systemctl is-endabled httpd      tells you if service is enabled
+
+
+
+------------------------
+Processes
+------------------------
+
+top                                                             shows dynamic processes based on cpu and ram u
+ps -ef | grep processname                                       show process information for specific process
+ps -ef | grep processname | grep -v 'grep'                      show process information except for process that contains the word grep
+kill <PID>                                                      stops process and child processes linked to that process
+kill -9 <PID>                                                   stops parent process( any child processes are not closed - called orphaned processes)
+ps -ef | grep processname | grep -v 'grep' | awk '{print $2}'   show process information except for process that contains the word grep, princt the second item in the row (in this case its the process id)
+
+
+
+
+-----------------------
+Archiving
+-----------------------
+            c create, z compress, v verbose, f file, tar tar ball, gz compressed with z option 
+            there are many other options you can use for different compression types 
+
+tar -czvf  filename.tar.gz  filepathDir         create compressed archive file called filename.tar.gz in filepathDir folder
+yum install zip unzip -y                         install zip and unzip packages
+zip -r filename.zip filedir
+
+
+
+
+-----------------------
+Ubuntu Commands
+-----------------------
+
+useradd username    does not work in Ubuntu
+adduser username     works in Ubuntu - creates user, group, home dir and copies files from /etc/skel into users home dir
+visudo              does not open vim because Ubuntu uses nano so this will open nano
+export EDITOR=vim   temporarily sets default editor to vim (now you can use visudo for opening sudo file in vim)
+
+dpkg -l             shows all packages on machine
+dpky -l packagename
+
+/etc/apt            shows repository infor 
+apt update          updates repository of available packages for download
+apt search pkgName  
+apt get pkgName      
+apt install pkgName     
+apt remove pghName 
+apt purge           removes package and all the configurate of the package (clean uninstall)
+
 
