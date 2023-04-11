@@ -93,6 +93,9 @@ chmod o-x /opt/groupName          for others remove execute permission
 chmod g+w /opt/groupName          add write permission for group
 chmod +x filepath                 command will give execute permission to all users on the filepath.
 
+---add execute permission for script
+chmod +x /opt/scripts/websetup.sh
+
 ls -l           view files and permissions in dir
 
 
@@ -120,6 +123,33 @@ VARIABLE_NAME= variable_value	Create a new variable
 Unset	Remove a variable
 export Variable=value	        To set value of an environment variable
 
+
+--- global variables
+you can use the /etc/profile file to add variables that will be available to all users
+if you want to add variables that will be available to a specific user then
+you can use the .bashrc file for that specific user (each user has their own .bashrc file)
+you can add variables into these files written like you would in the normal shell 
+
+--- export variables
+make variable available to child script using 
+export VAR = "myval"
+doing this will allow you to execute a script in the terminal that will have access to any variables you have specified
+in that parent terminal. 
+export VAR = $(<bash command>)
+
+
+------------------------------------
+User Input
+------------------------------------
+
+read <variable_name>	waits for user to put in input that is stored in the variable_name
+
+crease a .sh file like vi myfile.sh
+#!/bin/bash
+echo "Enter your skills: "
+read SKILL
+read -p 'Username: ' 	works as a prompt for the user (basically so you don't have to use echo)
+read -sp 'Password: '	-sp is for hiding what the user types as they put in input
 
 
 
@@ -293,6 +323,11 @@ rpm -ivh <filename>
 --- YUM
 yum install <packagename>
 
+if yum fails to install you can try clean all and then attempt to install packages again
+yum clean all
+
+
+
 ------------------------
 Services
 ------------------------
@@ -355,4 +390,17 @@ apt install pkgName
 apt remove pghName 
 apt purge           removes package and all the configurate of the package (clean uninstall)
 
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+
+/var/www/html
+location where you can put your html templates
+
+put template in /tmp folder and unzip
+
+copy unzipped folder to /var/www/html/
+cd into unzipped folder
+
+cp -r * /var/www/html/
 
