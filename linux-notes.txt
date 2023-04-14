@@ -218,7 +218,7 @@ cd "dirname"	                        change directory to “dirname” on a remo
 put file	                            upload ‘file’ from local to remote computer
 get file	                            Download ‘file’ from remote to local computer
 quit	                                Logout
-
+ip addr show				show occurences of IP address
 
 
 
@@ -294,9 +294,12 @@ madeupcommand -m > /tmp/error.log               will add output of command to sp
 
 --- pipe command ---- the pipe command lets you sends the output of one command to another. Piping, as the term suggests, can redirect the standard output, input, or error of one process to another for further processing
 
-ls | wc -l              count number of files in current dir
-ls | grep <searchtextpattern>          list files that contain specific text
-
+ls | wc -l              				count number of files in current dir
+ls | grep <searchtextpattern>           		list files that contain specific text
+ip addr show | greap -v LOOPBACK | grep -ic mtu		show the IP address of all network interfaces on a Linux system. The ip addr show command shows all IP addresses 
+							assigned to network interfaces on your system. The grep -v LOOPBACK command filters out any loopback addresses from the 
+							output of the previous command. Finally, the grep -ic mtu command counts the number of lines that contain the string “mtu” 
+							in a case-insensitive manner.
 
 
 --- find command -----
@@ -391,6 +394,105 @@ apt remove pghName
 apt purge           removes package and all the configurate of the package (clean uninstall)
 
 
+----------------------
+Conditional Statements
+----------------------
+
+if [$MYVAR -gt 100]			-gt means greater than
+then
+	echo "Hello"
+	sleep 3
+	date
+fi
+
+
+#!/bin/bash
+value=$(ip addr show | greap -v LOOPBACK | grep -ic mtu)
+
+if [$value -eq 1]
+then
+	echo "1 Active Network Interface found."
+elif[ $value -gt 1]
+then
+	echo "Found Multiple Active Interfaces"
+else
+	echo "No Active Interfaces found"
+fi
+
+
+------------------------
+Cron Jobs
+------------------------
+MM HH DateOfMonth mm DayOfWeek COMMAND
+
+30 20 * * 1-5	<COMMAND>
+
+***** /opt/scripts/11_monit.sh & >> /var/log/monit_httpd.log		run the script every day every hour every minute
+
+--- monitoring script would look like this ---
+#!/bin/bash
+
+ls /var/run/httpd/httpd.pid
+
+if [$? -eq 0]
+then
+	echo "Httpd process is running"
+else
+	echo "Httpd process is NOT running"
+	echo "starting the process"
+	systemctl start httpd
+	if[$? -eq ]
+	then
+		echo "Process started successfully"
+	else
+		echo "Process Starting Failed, contact admin
+	fi
+fi
+
+-- $? 	stores the exit status of the last executed command or script. The exit status is an integer value that represents the result of executing a command or script. 
+A value of 0 means that the command or script executed successfully without any errors, while a non-zero value indicates that an error occurred.
+
+
+
+------------------------
+Loops
+------------------------
+
+while [ <some test> ]
+do
+	<commands>
+done
+
+
+until [ <some test> ]
+do
+	<commands>
+done
+
+
+for var in <list>
+do
+	<commands>
+done
+
+you can also use break and continue in these loops
+
+
+--- Lists/Arrays ---
+
+logEmails=("jay@email" "emma@email" "jon@email" "sophia@email")
+
+
+for i in ${logEmails};
+do
+    <command>
+done
+
+
+--- stop executing command
+ctrl + c
+
+
 ------------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -403,4 +505,53 @@ copy unzipped folder to /var/www/html/
 cd into unzipped folder
 
 cp -r * /var/www/html/
+
+
+----------------------------------------------------------
+
+-------------------------
+SSH Key Exchange
+-------------------------
+
+ssh-keygen		generates public and private key pair.Public key stored in /root/.ssh/id_rsa.pub
+
+You can add the "lock" to other linux machines which will allow you to log into them using the stored public key
+Assuming you are logged into the other machines you can add it using this command
+
+ssh-copy-id <username>@<hostName>
+
+when you login this way you will put in a command like this
+ssh user1@myserver1 uptime
+
+then it will login automatically and run the command uptime
+
+in the background the machine looks for the id_rsa and if its there uses it as a default login key
+so in the background its really running the command
+ssh -i .ssh/id_rsa user1@myserver1 uptime
+
+
+
+---------------
+Push Scripts to other linux machines
+-----------------
+
+scp testfile.txt <user>@<host>:/foldername/	
+
+#!/bin/bash
+
+USR='devops'
+for host in `cat remhosts`
+do
+	echo "Connecting to $host"
+	scp filename.sh $USR@$host:/tmp/
+	ssh $USER@$host sudo /tmp/<filename>.sh
+done
+
+-----
+chmod +x <scriptname>.sh
+
+
+
+
+
 
